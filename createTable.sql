@@ -115,4 +115,4 @@ DROP TABLE Writes;
 DROP TABLE Publications;
 DROP TABLE Authors;
 DROP TABLE Persons;
-
+DROP TABLE ANDREW;
