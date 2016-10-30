@@ -1,3 +1,5 @@
+
+-- Function that returns 'T' if the person exists, otherwise 'F'
 create or replace FUNCTION bookExists(book_pid in INTEGER)
 RETURN CHAR
   IS
@@ -14,6 +16,7 @@ RETURN CHAR
     END IF;
 END bookExists;
 
+-- Function that returns 'T' if the person exists, otherwise 'F'
 create or replace FUNCTION personExists(person_perid in INTEGER)
 RETURN CHAR
   IS
@@ -30,19 +33,25 @@ RETURN CHAR
     END IF;
 END personExists;
 
-CREATE OR REPLACE PROCEDURE pay (perid in INTEGER, buy_pid in INTEGER)
+-- Procedure to getBook for a person
+CREATE OR REPLACE PROCEDURE getBook(personID in INTEGER, get_pid in INTEGER)
 AS 
 book integer;
+person integer;
+isAuthor CHAR(1);
+hasPayed CHAR(1);
+
 BEGIN
-  SELECT MAX(p.pid) INTO book
-  FROM Publications p
-  WHERE p.pid = buy_pid;
-  IF book IS NULL then
-    DBMS_OUTPUT.PUT_LINE('The book does not exist');
-  ELSE
-    DBMS_OUTPUT.PUT_LINE('Value inserted successfully');
-  END IF;
+  --Check that the book exists
+  Select p.pid into book
+  FROM Publications P
+  WHERE P.pid = get_pid;
+  
+  IF book is null THEN
+    DBMS_OUTPUT.PUT_LINE('The book does not exist!!');
+    EXIT;
+  ELSIF 
+  end if;
+
 END;
-
-
 
