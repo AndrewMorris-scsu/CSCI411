@@ -15,18 +15,13 @@ FOREIGN KEY(perid) REFERENCES Persons
 
 CREATE TABLE Publications (
 pid integer,
+perid integer,
 Title CHAR(30),
 type CHAR(30),
 content CHAR(50),
 price real,
-PRIMARY KEY(pid) );
-
-CREATE TABLE Writes (
-perid integer,
-pid integer,
-PRIMARY KEY(perid,pid), 
-FOREIGN KEY(perid) REFERENCES Authors,
-FOREIGN KEY(pid) REFERENCES Publications );
+PRIMARY KEY(pid) ),
+FOREIGN KEY(perid) REFERENCES Authors;
 
 CREATE TABLE RetrieveLog (
 perid integer,
@@ -78,16 +73,34 @@ INSERT INTO Persons (perid, name) VALUES (9, 'John');
 INSERT INTO Persons (perid, name) VALUES (10, 'Drake');
 
 --Publications
-INSERT INTO Publications (pid, Title, type, Content, price) VALUES (1, 'Posuere libero.', 'Transactions', 'Neque, torquent duis.', 10);
-INSERT INTO Publications (pid, Title, type, Content, price) VALUES (2, 'Penatibus tempor!', 'Conference Proceedings', 'Quis ipsum habitant.', 20);
-INSERT INTO Publications (pid, Title, type, Content, price) VALUES (3, 'Duis dictum.', 'Transactions', 'Mauris praesent lacus!', 30);
-INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (4,'The end of poverty','Journal','Solving pressing problems', 35);
-INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (5, 'Automobile', 'Magazine', 'Auto staff', 5);
-INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (6, 'Dash Diet', 'Article', 'Health issues', 9);
-INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (7, 'Nature', 'Journal', 'Science and Technology', 20);
-INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (8, 'Dress code', 'Article', 'Manners and behaviour', 25);
-INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (9, 'Fast company', 'Magazine', 'Business secrets', 50);
+INSERT INTO Publications (pid, Title, type, Content, price) VALUES (1, 1, 'Posuere libero.', 'Transactions', 'Neque, torquent duis.', 10);
+
+INSERT INTO Publications (pid, Title, type, Content, price) VALUES (2, 1, 'Penatibus tempor!', 'Conference Proceedings', 'Quis ipsum habitant.', 20);
+INSERT INTO Publications (pid, Title, type, Content, price) VALUES (2, 2, 'Penatibus tempor!', 'Conference Proceedings', 'Quis ipsum habitant.', 20);
+INSERT INTO Publications (pid, Title, type, Content, price) VALUES (3, 2, 'Duis dictum.', 'Transactions', 'Mauris praesent lacus!', 30);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (4, 7,'The end of poverty','Journal','Solving pressing problems', 35);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (5, 6, 'Automobile', 'Magazine', 'Auto staff', 5);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (6, 4,'Dash Diet', 'Article', 'Health issues', 9);
+
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (7, 3, 'Nature', 'Journal', 'Science and Technology', 20);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (7, 5, 'Nature', 'Journal', 'Science and Technology', 20);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (8, 5, 'Dress code', 'Article', 'Manners and behaviour', 25);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (9, 8, 'Fast company', 'Magazine', 'Business secrets', 50);
+/* OLD VALUES FOR WRITES TABLE
+INSERT INTO Writes (perid, pid) VALUES ( 1, 1);
+INSERT INTO Writes (perid, pid) VALUES ( 1, 2);
+INSERT INTO Writes (perid, pid) VALUES ( 2, 2);
+INSERT INTO Writes (perid, pid) VALUES ( 2, 3);
+INSERT INTO WRITES (perid, pid) VALUES (3,7);
+INSERT INTO WRITES (perid, pid) VALUES (4,6);
+INSERT INTO WRITES (perid, pid) VALUES (5,7);
+INSERT INTO WRITES (perid, pid) VALUES (5,8);
+INSERT INTO WRITES (perid, pid) VALUES (6,5);
+INSERT INTO WRITES (perid, pid) VALUES (7,4);
+INSERT INTO WRITES (perid, pid) VALUES (8,9);
+*/
 --Customers
+
 INSERT INTO Customer (perid) VALUES (3);
 INSERT INTO Customer (perid) VALUES (4);
 INSERT INTO Customer (perid) VALUES (5);
@@ -115,17 +128,8 @@ INSERT INTO Rates (perid, pid, rating) VALUES (5, 3, 5);
 
 INSERT INTO RetrieveLog (perid, pid, DateViewed) VALUES (3, 1, TO_DATE('10/27/2016', 'MM/DD/YYYY'));
 INSERT INTO RetrieveLog (perid, pid, DateViewed) VALUES (4, 2, TO_DATE('10/01/2016', 'MM/DD/YYYY'));
-INSERT INTO Writes (perid, pid) VALUES ( 1, 1);
-INSERT INTO Writes (perid, pid) VALUES ( 1, 2);
-INSERT INTO Writes (perid, pid) VALUES ( 2, 2);
-INSERT INTO Writes (perid, pid) VALUES ( 2, 3);
-INSERT INTO WRITES (perid, pid) VALUES (3,7);
-INSERT INTO WRITES (perid, pid) VALUES (4,6);
-INSERT INTO WRITES (perid, pid) VALUES (5,7);
-INSERT INTO WRITES (perid, pid) VALUES (5,8);
-INSERT INTO WRITES (perid, pid) VALUES (6,5);
-INSERT INTO WRITES (perid, pid) VALUES (7,4);
-INSERT INTO WRITES (perid, pid) VALUES (8,9);
+
+
 
 
 
