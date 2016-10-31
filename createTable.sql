@@ -85,6 +85,8 @@ INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (4,'The end o
 INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (5, 'Automobile', 'Magazine', 'Auto staff', 5);
 INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (6, 'Dash Diet', 'Article', 'Health issues', 9);
 INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (7, 'Nature', 'Journal', 'Science and Technology', 20);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (8, 'Dress code', 'Article', 'Manners and behaviour', 25);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (9, 'Fast company', 'Magazine', 'Business secrets', 50);
 --Customers
 INSERT INTO Customer (perid) VALUES (3);
 INSERT INTO Customer (perid) VALUES (4);
@@ -117,6 +119,13 @@ INSERT INTO Writes (perid, pid) VALUES ( 1, 1);
 INSERT INTO Writes (perid, pid) VALUES ( 1, 2);
 INSERT INTO Writes (perid, pid) VALUES ( 2, 2);
 INSERT INTO Writes (perid, pid) VALUES ( 2, 3);
+INSERT INTO WRITES (perid, pid) VALUES (3,7);
+INSERT INTO WRITES (perid, pid) VALUES (4,6);
+INSERT INTO WRITES (perid, pid) VALUES (5,7);
+INSERT INTO WRITES (perid, pid) VALUES (5,8);
+INSERT INTO WRITES (perid, pid) VALUES (6,5);
+INSERT INTO WRITES (perid, pid) VALUES (7,4);
+INSERT INTO WRITES (perid, pid) VALUES (8,9);
 
 
 
@@ -131,3 +140,16 @@ DROP TABLE Writes;
 DROP TABLE Publications;
 DROP TABLE Authors;
 DROP TABLE Persons;
+
+-- LIST THE NAMES OF AUTHORS WHO LIVE IN THE SAME CITY #2
+SELECT P.name, A.city
+FROM Persons P, Authors A, Authors B
+WHERE P.perid = A.perid AND A.city = B.city AND A.perid<>B.perid
+GROUP BY (A.city, P.name);
+
+--LIST THE MOST EXPENSIVE PUBLICATION WITH AUTHOR'S NAME #3
+SELECT Per.name, P.title, P.price
+FROM Persons Per, Publications P, Authors A, Writes W
+WHERE A.perid=Per.perid AND W.perid=A.perid AND W.pid = P.pid AND
+      P.price = (SELECT MAX (P2.price) FROM Publications P2)
+GROUP BY (P.price,P.title,Per.name);
