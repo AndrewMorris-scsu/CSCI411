@@ -2,13 +2,13 @@ CREATE OR REPLACE PROCEDURE getBook(personID in INTEGER, get_pid in INTEGER)
 AS 
 book integer;
 person integer;
-isAuthor CHAR;
-hasPayed CHAR;
+author integer; 
+hasPayed integer;
+isAuthor integer; 
 isBook CHAR;
 
 BEGIN
   --Check that the book exists
-    isAuthor := bookExists( 1, 2);
   if bookExists(get_pid) = 'F' then
     DBMS_OUTPUT.PUT_LINE('The Book does not exist...');
     RETURN;
@@ -18,12 +18,41 @@ BEGIN
         RETURN; 
     else
         DBMS_OUTPUT.PUT_LINE('Continue');
-    END IF; 
-     
+        SELECT MAX(A.perid) INTO isAuthor
+        FROM Authors A, Writes W
+        WHERE A.perid = W.perid 
+          AND A.perid = personID;
         
+        if isAuthor IS NULL THEN
+            --We know the person is a consumer 
+            --The person has to have bought in order to retrieve
+            Select MAX(C.perid) INTO hasPayed
+            FROM Customer C, paysFor P
+            WHERE C.perid = personID
+            AND C.perid = P.perid
+            AND P.pid = get_pid;
+            
+            if hasPayed is NULL THEN 
+                DBMS_OUTPUT.PUT_LINE('Customer has not paid for this book');
+                RETURN;
+            else
+                DBMS_OUTPUT.PUT_LINE('Customer has paid for this book');
+                INSERT INTO RetrieveLog (perid, pid, dateviewed)
+                VALUES (personID, get_pid, SYSDATE());
+            END IF;
+        else
+            --The person wrote the book and should be able to retrieve freely
+            DBMS_OUTPUT.PUT_LINE('The Author can access his/her work freely');
+            INSERT INTO RetrieveLog (perid, pid, dateviewed)
+            VALUES (personID, get_pid, SYSDATE());
+        END IF;
+    END IF; 
   END IF;  
-
 END;
+
+SELECT * FROM WRITES;
+
+
 --Function that returns a T if the book exists, otherwise
 --it will return an 'F'
 CREATE OR REPLACE FUNCTION bookExists(book_pid in INTEGER)
