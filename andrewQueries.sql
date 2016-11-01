@@ -91,3 +91,23 @@ END personExists;
 
 
 
+-- 1. Author who published "x" book
+create or replace PROCEDURE getAuthor (auth IN CHAR)                
+AS
+AuthorID integer;                                                   
+AuthorName Char;                                                    
+BEGIN
+Select A.perid into AuthorID                                        
+  FROM Authors A
+  WHERE A.perid = auth;
+  IF AuthorID is NULL THEN
+    DBMS_OUTPUT.PUT_LINE('Im sorry, the author does not exist');   
+  ELSE 
+    Select P.name into AuthorName
+    FROM Persons P
+    WHERE P.perid = AuthorID;                                       
+    
+    DBMS_OUTPUT.PUT_LINE('The authors name is: '|| AuthorName);
+  END IF;
+END;                                                        
+
