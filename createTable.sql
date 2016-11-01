@@ -138,7 +138,7 @@ INSERT INTO RetrieveLog (perid, pid, DateViewed) VALUES (4, 2, TO_DATE('10/01/20
 
 
 --DELETE TABLES__
-
+/*
 DROP TABLE Rates;
 DROP TABLE paysFor;
 DROP TABLE Customer;
@@ -148,6 +148,8 @@ DROP TABLE Writes;
 DROP TABLE Publications;
 DROP TABLE Authors;
 DROP TABLE Persons;
+*/
+
 
 -- LIST THE NAMES OF AUTHORS WHO LIVE IN THE SAME CITY #2
 SELECT P.name, A.city
