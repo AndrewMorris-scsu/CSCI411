@@ -25,6 +25,7 @@ END;
 -- 5. Name of books that that x has read along with the amount of times they have retrieved the work. 
 -- 6. Show each person who has bought a book or published an article. Show the count of how many books a person has written, and also show the number of books that a customer has bought. If there is no amount, show a zero. 
 --7. Show all users that have read the book with the highest average rating. 
+
 --8. Print out the names of all of the Customers that have viewed book X.
 
 #1
@@ -72,3 +73,7 @@ were retrieved between 03/01/2010 and 09/01/2016
 #8
 List the names of the authors and publications where the author wrote more than 
 2 types of publications and the cost was between $5 and $20
+
+--8. Print out the names of all of the Customers that have viewed book X. 
+
+

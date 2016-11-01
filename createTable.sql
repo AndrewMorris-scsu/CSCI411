@@ -20,8 +20,14 @@ Title CHAR(30),
 type CHAR(30),
 content CHAR(50),
 price real,
-PRIMARY KEY(pid) ),
-FOREIGN KEY(perid) REFERENCES Authors;
+PRIMARY KEY(pid));
+
+CREATE TABLE Writes (
+  pid integer, 
+  perid integer, 
+  PRIMARY KEY(pid, perid),
+  FOREIGN KEY(pid) REFERENCES Publications,
+  FOREIGN KEY(perid) REFERENCES Authors);
 
 CREATE TABLE RetrieveLog (
 perid integer,
@@ -73,32 +79,17 @@ INSERT INTO Persons (perid, name) VALUES (9, 'John');
 INSERT INTO Persons (perid, name) VALUES (10, 'Drake');
 
 --Publications
-INSERT INTO Publications (pid, perid, Title, type, Content, price) VALUES (1, 1, 'Posuere libero.', 'Transactions', 'Neque, torquent duis.', 10);
+INSERT INTO Publications (pid, Title, type, Content, price) VALUES (1, 'Posuere libero.', 'Transactions', 'Neque, torquent duis.', 10);
+INSERT INTO Publications (pid, Title, type, Content, price) VALUES (2, 'Penatibus tempor!', 'Conference Proceedings', 'Quis ipsum habitant.', 20);
+INSERT INTO Publications (pid, Title, type, Content, price) VALUES (3, 'Duis dictum.', 'Transactions', 'Mauris praesent lacus!', 30);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (4, 'The end of poverty','Journal','Solving pressing problems', 35);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (5, 'Automobile', 'Magazine', 'Auto staff', 5);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (6, 'Dash Diet', 'Article', 'Health issues', 9);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (7, 'Nature', 'Journal', 'Science and Technology', 20);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (8, 'Dress code', 'Article', 'Manners and behaviour', 25);
+INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (9, 'Fast company', 'Magazine', 'Business secrets', 50);
 
-INSERT INTO Publications (pid, perid, Title, type, Content, price) VALUES (2, 1, 'Penatibus tempor!', 'Conference Proceedings', 'Quis ipsum habitant.', 20);
-INSERT INTO Publications (pid,  perid, Title, type, Content, price) VALUES (2, 2, 'Penatibus tempor!', 'Conference Proceedings', 'Quis ipsum habitant.', 20);
-INSERT INTO Publications (pid,  perid, Title, type, Content, price) VALUES (3, 2, 'Duis dictum.', 'Transactions', 'Mauris praesent lacus!', 30);
-INSERT INTO PUBLICATIONS (pid,  perid, title, type, content, price) VALUES (4, 7,'The end of poverty','Journal','Solving pressing problems', 35);
-INSERT INTO PUBLICATIONS (pid, perid,  title, type, content, price) VALUES (5, 6, 'Automobile', 'Magazine', 'Auto staff', 5);
-INSERT INTO PUBLICATIONS (pid, perid,  title, type, content, price) VALUES (6, 4,'Dash Diet', 'Article', 'Health issues', 9);
 
-INSERT INTO PUBLICATIONS (pid,  perid, title, type, content, price) VALUES (7, 3, 'Nature', 'Journal', 'Science and Technology', 20);
-INSERT INTO PUBLICATIONS (pid,  perid, title, type, content, price) VALUES (7, 5, 'Nature', 'Journal', 'Science and Technology', 20);
-INSERT INTO PUBLICATIONS (pid,  perid, title, type, content, price) VALUES (8, 5, 'Dress code', 'Article', 'Manners and behaviour', 25);
-INSERT INTO PUBLICATIONS (pid,  perid, title, type, content, price) VALUES (9, 8, 'Fast company', 'Magazine', 'Business secrets', 50);
-/* OLD VALUES FOR WRITES TABLE
-INSERT INTO Writes (perid, pid) VALUES ( 1, 1);
-INSERT INTO Writes (perid, pid) VALUES ( 1, 2);
-INSERT INTO Writes (perid, pid) VALUES ( 2, 2);
-INSERT INTO Writes (perid, pid) VALUES ( 2, 3);
-INSERT INTO WRITES (perid, pid) VALUES (3,7);
-INSERT INTO WRITES (perid, pid) VALUES (4,6);
-INSERT INTO WRITES (perid, pid) VALUES (5,7);
-INSERT INTO WRITES (perid, pid) VALUES (5,8);
-INSERT INTO WRITES (perid, pid) VALUES (6,5);
-INSERT INTO WRITES (perid, pid) VALUES (7,4);
-INSERT INTO WRITES (perid, pid) VALUES (8,9);
-*/
 --Customers
 
 INSERT INTO Customer (perid) VALUES (3);
@@ -117,6 +108,19 @@ INSERT INTO AUTHORS (perid, city, state, streetAddress) VALUES (8, 'Duluth', 'MN
 INSERT INTO AUTHORS (perid, city, state, streetAddress) VALUES (9, 'madison', 'wi', '1988 Asher');
 INSERT INTO AUTHORS (perid, city, state, streetAddress) VALUES (10, 'Duluth', 'MN', '888 East Jackson');
 
+--WRITES
+INSERT INTO Writes (perid, pid) VALUES ( 1, 1);
+INSERT INTO Writes (perid, pid) VALUES ( 1, 2);
+INSERT INTO Writes (perid, pid) VALUES ( 2, 2);
+INSERT INTO Writes (perid, pid) VALUES ( 2, 3);
+INSERT INTO WRITES (perid, pid) VALUES (3,7);
+INSERT INTO WRITES (perid, pid) VALUES (4,6);
+INSERT INTO WRITES (perid, pid) VALUES (5,7);
+INSERT INTO WRITES (perid, pid) VALUES (5,8);
+INSERT INTO WRITES (perid, pid) VALUES (6,5);
+INSERT INTO WRITES (perid, pid) VALUES (7,4);
+INSERT INTO WRITES (perid, pid) VALUES (8,9);
+
 --paysFor
 INSERT INTO PaysFor (perid, pid, cost) VALUES (3, 1, 10);
 INSERT INTO PaysFor (perid, pid, cost) VALUES (4, 2, 20);
@@ -134,7 +138,7 @@ INSERT INTO RetrieveLog (perid, pid, DateViewed) VALUES (4, 2, TO_DATE('10/01/20
 
 
 --DELETE TABLES__
-
+/*
 DROP TABLE Rates;
 DROP TABLE paysFor;
 DROP TABLE Customer;
@@ -144,6 +148,8 @@ DROP TABLE Writes;
 DROP TABLE Publications;
 DROP TABLE Authors;
 DROP TABLE Persons;
+*/
+
 
 -- LIST THE NAMES OF AUTHORS WHO LIVE IN THE SAME CITY #2
 SELECT P.name, A.city
