@@ -15,7 +15,6 @@ FOREIGN KEY(perid) REFERENCES Persons
 
 CREATE TABLE Publications (
 pid integer,
-perid integer,
 Title CHAR(30),
 type CHAR(30),
 content CHAR(50),

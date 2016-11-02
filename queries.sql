@@ -373,6 +373,38 @@ FROM Persons P, Authors A, Authors B
 WHERE P.perid = A.perid AND A.city = B.city AND A.perid<>B.perid
 GROUP BY (A.city, P.name);
 
+-- 19.List the names of the author and publication where the author wrote more than
+--    2 types of publications and the cost was between $5 and $20
+Select P.name, Pub.title
+FROM Persons P, Authors A, Publications Pub, Writes W,
+    (Select DISTINCT (P.perid) perids
+      FROM Persons P, Authors A, Writes W1, Writes W2, Publications P1, Publications P2
+      WHERE P.perid = A.perid
+      AND A.perid = W1.perid
+      AND W1.pid = P1.pid
+      AND A.perid = W2.perid
+      AND W2.pid = P2.pid
+      AND P1.pid <> P2.pid
+      AND P1.price < 20.0
+      AND P2.price < 20.0) temp
+  WHERE temp.perids = P.perid AND temp.perids = A.perid AND A.perid = W.perid AND Pub.pid = W.pid AND Pub.price < 20.0;
+
+  --USEFUL DATA FOR TESTING:
+  --  INSERT INTO Publications (pid, title, type, content, price) VALUES (90, 'A title', 'Magazine', 'Content here',5);
+  --INSERT INTO Publications (pid, title, type, content, price) VALUES (91, 'Nother Title', 'Proceedings', 'Content Here', 4);
+
+  --EXEC Write(1, 90);
+  --EXEC Write(1, 91);
+
+--20. Show all users that have read the books with the highest average rating.
+SELECT P.name
+FROM (SELECT avgRates.pid, MAX(avgRates.avgRating) theMax
+          FROM (SELECT R.pid, AVG(R.rating) avgRating
+                FROM Rates R
+                Group BY R.pid) avgRates
+        GROUP BY avgRates.pid
+     ) maxAvg, Persons P, RetrieveLog RL
+WHERE maxAvg.pid = RL.pid AND RL.perid = P.perid;
 
 -- 3. List the counts of views by document type from all Persons. If they have a count of zero for views, show a zero.
 -- 4. What is the average cost for an author's work.
@@ -384,5 +416,3 @@ GROUP BY (A.city, P.name);
 --#5 List the name & id of Author and Customer who are from the same state
 --#7 List the name, id & date viewed of publications that are rated more than 3 and
 --were retrieved between 03/01/2010 and 09/01/2016
---#8 List the names of the authors and publications where the author wrote more than
---2 types of publications and the cost was between $5 and $20
