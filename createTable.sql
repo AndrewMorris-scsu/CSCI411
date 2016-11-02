@@ -197,12 +197,37 @@ create or replace FUNCTION isAuthor(PersonID in Integer, book_pid in INTEGER)
      END IF;
   END isAuthor;
   
+  --FUNCTION RATEALREADYEXIST--
+create or replace FUNCTION rateAlreadyExist(PersonID in INTEGER, book_pid in INTEGER)
+RETURN CHARACTER
+  IS
+    tempPersonID integer;
+  BEGIN
+    IF bookexists(book_pid) = 'T' and personexists(PersonID) = 'T' then
+      Select Max(R.perid) into tempPersonID
+      from Rates R
+
+      Where
+        R.perid = PersonID AND
+        R.pid = book_pid;
+
+        IF tempPersonID is null THEN
+          return 'F';
+        ELSE
+          return 'T';
+        End IF;
+
+      ELSE
+        return 'F';
+        END IF;
+      END rateAlreadyExist;
+	  --FUNCTION ENDS HERE--
+  
 --RATES TABLE INSERT PROCEDURE--
 create or replace PROCEDURE Rates_1 (PERSONID IN INTEGER, pub_id in INTEGER, pub_rating in INTEGER) AS 
 
 BEGIN
 
-  
   IF personExists(PERSONID) = 'F' then
     DBMS_OUTPUT.PUT_LINE('The author does not exist.');
   ELSIF bookExists(pub_id) = 'F' then
@@ -211,10 +236,14 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Rating can be from 1 to 5');
   ElsIF isAuthor(personID,pub_id) = 'T' then
     DBMS_OUTPUT.PUT_LINE('The author of the book cannot rate book');
+  ELSIF RATEALREADYEXIST(PERSONID,pub_id) = 'T' then
+    /*DBMS_OUTPUT.PUT_LINE('This customer has already rated this publication');*/
+    UPDATE Rates SET PERID = PERSONID, PID = pub_id, RATING = pub_rating
+     WHERE PERID = PERSONID AND  PID = pub_id;
   ELSE 
     INSERT INTO Rates (PERID, PID, RATING) VALUES (PERSONID, pub_id, pub_rating);
     DBMS_OUTPUT.PUT_LINE('Value inserted successfully'); 
   END IF;
   COMMIT;
 END;
-----YULDUZ'S PART IS DONE HERE--
+----YULDUZ'S PART IS DONE HERE-- ADDED ONE MORE IF STATEMENT
