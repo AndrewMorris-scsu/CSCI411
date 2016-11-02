@@ -163,3 +163,52 @@ FROM Persons Per, Publications P, Authors A, Writes W
 WHERE A.perid=Per.perid AND W.perid=A.perid AND W.pid = P.pid AND
       P.price = (SELECT MAX (P2.price) FROM Publications P2)
 GROUP BY (P.price,P.title,Per.name);
+
+--FUNCTION ISAUTHOR() 
+create or replace FUNCTION isAuthor(PersonID in Integer, book_pid in INTEGER)
+  RETURN CHARACTER
+    IS
+     tempBook integer;
+     tempAuthor integer;
+   BEGIN
+
+     If bookexists(book_pid) = 'T' and personexists(personId) = 'T' then    
+          Select MAX(A.perid) into tempAuthor
+          from  Persons P, Authors A, Writes W
+          WHERE 
+
+             personid = P.perid and
+             P.perid = A.perid and
+             A.perid = W.perid and
+             book_pid = W.pid;
+          If tempAuthor IS NULL then
+            return 'F';
+          Else 
+            return 'T';
+          End if;
+     ELSE
+        return 'F';
+     END IF;
+  END isAuthor;
+  
+--RATES TABLE INSERT PROCEDURE--
+create or replace PROCEDURE Rates_1 (PERSONID IN INTEGER, pub_id in INTEGER, pub_rating in INTEGER) AS 
+
+BEGIN
+
+  
+  IF personExists(PERSONID) = 'F' then
+    DBMS_OUTPUT.PUT_LINE('The author does not exist.');
+  ELSIF bookExists(pub_id) = 'F' then
+    DBMS_OUTPUT.PUT_LINE('The Publication does not exist.');
+  ELSIF pub_rating < 1 OR pub_rating> 5 then
+    DBMS_OUTPUT.PUT_LINE('Rating can be from 1 to 5');
+  ElsIF isAuthor(personID,pub_id) = 'T' then
+    DBMS_OUTPUT.PUT_LINE('The author of the book cannot rate book');
+  ELSE 
+    INSERT INTO Rates (PERID, PID, RATING) VALUES (PERSONID, pub_id, pub_rating);
+    DBMS_OUTPUT.PUT_LINE('Value inserted successfully'); 
+  END IF;
+  COMMIT;
+END;
+----YULDUZ'S PART IS DONE HERE--
