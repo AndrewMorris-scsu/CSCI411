@@ -90,23 +90,24 @@ END personExists;
 
 
 -- 1. Name of the author
-create or replace PROCEDURE getAuthor (auth IN CHAR)
+create or replace PROCEDURE getAuthor (auth IN integer)
 AS
 AuthorID integer;
-AuthorName Char;
-BEGIN
-Select A.perid into AuthorID
-  FROM Authors A
-  WHERE A.perid = auth;
-  IF AuthorID is NULL THEN
-    DBMS_OUTPUT.PUT_LINE('Im sorry, the author does not exist');
-  ELSE
-    Select P.name into AuthorName
-    FROM Persons P
-    WHERE P.perid = AuthorID;
+AuthorName Char(20);
 
-    DBMS_OUTPUT.PUT_LINE('The authors name is: '|| AuthorName);
-  END IF;
+BEGIN
+  AUTHORID := NULL;
+  Select MAX(A.perid) into AuthorID
+    FROM Authors A
+    WHERE A.perid = auth;
+    IF AuthorID is NULL THEN
+      DBMS_OUTPUT.PUT_LINE('Im sorry, the author does not exist');
+    ELSE
+      Select P.name into AuthorName
+      FROM Persons P
+      WHERE P.perid = AuthorID;
+      DBMS_OUTPUT.PUT_LINE('The authors name is: '|| AuthorName);
+    END IF;
 END;
 
 -- 2. List Name of Person and Title of Book for the latest n retrieved records
