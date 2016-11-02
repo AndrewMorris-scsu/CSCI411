@@ -331,21 +331,48 @@ BEGIN
   COMMIT;
 END;
 
--- 16. List the authors that live in the city which contains the highest average rated authors in that city
+-- 16. Insert a rating for a book, the rater must have bought the work, or be an author
+--And did not write it.
+create or replace PROCEDURE Rates_1 (PERSONID IN INTEGER, pub_id in INTEGER, pub_rating in INTEGER) AS
 
+BEGIN
+
+
+  IF personExists(PERSONID) = 'F' then
+    DBMS_OUTPUT.PUT_LINE('The person does not exist.');
+  ELSIF bookExists(pub_id) = 'F' then
+    DBMS_OUTPUT.PUT_LINE('The Publication does not exist.');
+  ELSIF pub_rating < 1 OR pub_rating > 5 then
+    DBMS_OUTPUT.PUT_LINE('Rating can be from 1 to 5');
+  ElsIF isAuthor(personID,pub_id) = 'T' then
+    DBMS_OUTPUT.PUT_LINE('The author of the book cannot rate book');
+  ELSE
+    INSERT INTO Rates (PERID, PID, RATING) VALUES (PERSONID, pub_id, pub_rating);
+    DBMS_OUTPUT.PUT_LINE('Value inserted successfully');
+  END IF;
+  COMMIT;
+END;
+
+-- 17. List the authors that live in the city which contains the highest rated authors
 Select P.name
 FROM (Select A.city, AVG(R.rating) AvgRating
       FROM Rates R, Publications P, Writes W, Authors A
       WHERE A.perid = W.perid AND W.pid = P.pid AND P.pid = R.pid
-      GROUP BY A.city ) Temp1, 
+      GROUP BY A.city ) Temp1,
       Authors A, Persons P
 WHERE A.city = Temp1.city AND P.perid = A.perid
       AND Temp1.AvgRating = (  Select MAX(temp2.AvgRating)
                                FROM (Select A.city, AVG(R.rating) AvgRating
                                       FROM Rates R, Publications P, Writes W, Authors A
                                       WHERE A.perid = W.perid AND W.pid = P.pid AND P.pid = R.pid
-                                      GROUP BY A.city) temp2); 
-      
+                                      GROUP BY A.city) temp2);
+
+-- 18. List All of the authors that live in the same city as another author.
+SELECT P.name, A.city
+FROM Persons P, Authors A, Authors B
+WHERE P.perid = A.perid AND A.city = B.city AND A.perid<>B.perid
+GROUP BY (A.city, P.name);
+
 
 -- 3. List the counts of views by document type from all Persons. If they have a count of zero for views, show a zero.
 -- 4. What is the average cost for an author's work.
