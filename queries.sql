@@ -331,14 +331,21 @@ BEGIN
   COMMIT;
 END;
 
--- 16. List the authors that live in the city which contains the highest rated authors
+-- 16. List the authors that live in the city which contains the highest average rated authors in that city
 
-Select MAX(Temp.avgRating)
-FROM (Select AVG(R.rating)
+Select P.name
+FROM (Select A.city, AVG(R.rating) AvgRating
       FROM Rates R, Publications P, Writes W, Authors A
-      WHERE P.perid = A.perid AND A.perid = W.perid AND W.pid = P.pid AND P.pid = R.pid
-      GROUP BY W.city
-      )
+      WHERE A.perid = W.perid AND W.pid = P.pid AND P.pid = R.pid
+      GROUP BY A.city ) Temp1, 
+      Authors A, Persons P
+WHERE A.city = Temp1.city AND P.perid = A.perid
+      AND Temp1.AvgRating = (  Select MAX(temp2.AvgRating)
+                               FROM (Select A.city, AVG(R.rating) AvgRating
+                                      FROM Rates R, Publications P, Writes W, Authors A
+                                      WHERE A.perid = W.perid AND W.pid = P.pid AND P.pid = R.pid
+                                      GROUP BY A.city) temp2); 
+      
 
 -- 3. List the counts of views by document type from all Persons. If they have a count of zero for views, show a zero.
 -- 4. What is the average cost for an author's work.
