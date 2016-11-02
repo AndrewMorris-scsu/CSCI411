@@ -63,7 +63,7 @@ perid integer,
 pid integer,
 rating integer,
 PRIMARY KEY(perid,pid),
-FOREIGN KEY(perid) REFERENCES Customer,
+FOREIGN KEY(perid) REFERENCES Persons,
 FOREIGN KEY(pid) REFERENCES Publications );
 
 --INSERT VALUES__
