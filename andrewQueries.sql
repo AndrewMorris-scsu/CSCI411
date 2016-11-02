@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE getBook(personID in INTEGER, get_pid in INTEGER)
+create or replace PROCEDURE getBook(personID in INTEGER, get_pid in INTEGER)
 AS
 book integer;
 person integer;
@@ -21,7 +21,8 @@ BEGIN
         SELECT MAX(A.perid) INTO isAuthor
         FROM Authors A, Writes W
         WHERE A.perid = W.perid
-          AND A.perid = personID;
+          AND A.perid = personID
+          AND W.pid = get_pid;
 
         if isAuthor IS NULL THEN
             --We know the person is a consumer
@@ -168,9 +169,6 @@ create or replace procedure findCircle (
       RETURN;
     END IF;
 
-    select COUNT(*) INTO ChildCount
-    from Refers R
-    where p_start_with = R.pid;
     if (p_start_with != grandpa) then
       DBMS_OUTPUT.PUT_LINE(childsParent || ' references ' || p_start_with);
     End if;

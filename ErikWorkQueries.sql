@@ -1,4 +1,4 @@
-1. CREATE OR REPLACE PROCEDURE findAuthor(X IN CHAR) AS
+CREATE OR REPLACE PROCEDURE findAuthor(X IN CHAR) AS
 n CHAR(30);
 BEGIN 
 SELECT R.name INTO n
@@ -10,7 +10,7 @@ END;
 EXEC findAuthor('Posuere libero.');
 
 
-3.Print out the names of each user who have viewed a Book of type Y. where Y is a input parameter. 
+--3.Print out the names of each user who have viewed a Book of type Y. where Y is a input parameter. 
 
 CREATE OR REPLACE PROCEDURE findUsers(Y IN CHAR) AS
 s CHAR(30);
@@ -18,11 +18,12 @@ cursor find is SELECT DISTINCT S.name
 FROM Publications P, PaysFor F, Customer C, Persons S
 WHERE P.type = Y AND P.pid = F.pid AND F.perid = C.perid AND C.perid = S.perid;
 BEGIN
+DBMS_OUTPUT.PUT_LINE('The names of users who viewed a Book of type are :');
 open find;
 loop fetch find INTO s;
 if(find%NOTFOUND) then exit;
 end if;
-DBMS_OUTPUT.PUT_LINE('The names of users who viewed a Book of type are '||s);
+DBMS_OUTPUT.PUT_LINE(s);
 end loop;
 close find;
 END;
