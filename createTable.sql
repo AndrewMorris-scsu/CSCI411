@@ -41,7 +41,8 @@ CREATE TABLE Refers(
 pid integer,
 rid integer,
 PRIMARY KEY(pid,rid),
-FOREIGN KEY(pid) REFERENCES Publications );
+FOREIGN KEY(pid) REFERENCES Publications,
+FOREIGN KEY(rid) REFERENCES Publications(pid));
 
 CREATE TABLE Customer (
 perid integer,
@@ -133,8 +134,13 @@ INSERT INTO Rates (perid, pid, rating) VALUES (5, 3, 5);
 INSERT INTO RetrieveLog (perid, pid, DateViewed) VALUES (3, 1, TO_DATE('10/27/2016', 'MM/DD/YYYY'));
 INSERT INTO RetrieveLog (perid, pid, DateViewed) VALUES (4, 2, TO_DATE('10/01/2016', 'MM/DD/YYYY'));
 
-
-
+INSERT INTO Refers (pid, rid) VALUES(1, 2);
+INSERT INTO Refers (pid, rid) VALUES(1, 3); 
+INSERT INTO Refers (pid, rid) VALUES(2, 4);
+INSERT INTO Refers (pid, rid) VALUES(3, 5);
+INSERT INTO Refers (pid, rid) VALUES(4, 5);
+INSERT INTO Refers (pid, rid) VALUES(2, 3);
+INSERT INTO Refers (pid, rid) VALUES(3, 1);
 
 
 --DELETE TABLES__
