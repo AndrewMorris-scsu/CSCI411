@@ -78,6 +78,8 @@ INSERT INTO Persons (perid, name) VALUES (7, 'Jake');
 INSERT INTO Persons (perid, name) VALUES (8, 'Kate');
 INSERT INTO Persons (perid, name) VALUES (9, 'John');
 INSERT INTO Persons (perid, name) VALUES (10, 'Drake');
+INSERT INTO Persons (perid, name) VALUES (11, 'Mila');
+INSERT INTO Persons (perid, name) VALUES (12, 'Ashley');
 
 --Publications
 INSERT INTO Publications (pid, Title, type, Content, price) VALUES (1, 'Posuere libero.', 'Transactions', 'Neque, torquent duis.', 10);
@@ -96,6 +98,15 @@ INSERT INTO PUBLICATIONS (pid, title, type, content, price) VALUES (9, 'Fast com
 INSERT INTO Customer (perid) VALUES (3);
 INSERT INTO Customer (perid) VALUES (4);
 INSERT INTO Customer (perid) VALUES (5);
+INSERT INTO Customer (perid) VALUES (1);
+INSERT INTO Customer (perid) VALUES (2);
+INSERT INTO Customer (perid) VALUES (6);
+INSERT INTO Customer (perid) VALUES (7);
+INSERT INTO Customer (perid) VALUES (8);
+INSERT INTO Customer (perid) VALUES (9);
+INSERT INTO Customer (perid) VALUES (10);
+INSERT INTO Customer (perid) VALUES (11);
+INSERT INTO Customer (perid) VALUES (12);
 
 --authors
 INSERT INTO Authors (perid, city, state, streetAddress) VALUES (1, 'irving', 'tx', '6772 hortense');
@@ -121,13 +132,32 @@ INSERT INTO WRITES (perid, pid) VALUES (5,8);
 INSERT INTO WRITES (perid, pid) VALUES (6,5);
 INSERT INTO WRITES (perid, pid) VALUES (7,4);
 INSERT INTO WRITES (perid, pid) VALUES (8,9);
+INSERT INTO WRITES (perid, pid) VALUES (3,2);
 
 --paysFor
 INSERT INTO PaysFor (perid, pid, cost) VALUES (3, 1, 10);
 INSERT INTO PaysFor (perid, pid, cost) VALUES (4, 2, 20);
+INSERT INTO PaysFor (perid, pid, cost) VALUES (5, 6, 9);
+INSERT INTO PaysFor (perid, pid, cost) VALUES (9, 6, 9);
 
 --Rates
-INSERT INTO Rates (perid, pid, rating) VALUES (5, 3, 5);
+Insert into RATES (PERID,PID,RATING) values ('9','7','2');
+Insert into RATES (PERID,PID,RATING) values ('9','9','2');
+Insert into RATES (PERID,PID,RATING) values ('10','6','2');
+Insert into RATES (PERID,PID,RATING) values ('2','2','5');
+Insert into RATES (PERID,PID,RATING) values ('5','3','5');
+Insert into RATES (PERID,PID,RATING) values ('3','2','4');
+Insert into RATES (PERID,PID,RATING) values ('1','6','4');
+Insert into RATES (PERID,PID,RATING) values ('3','3','5');
+Insert into RATES (PERID,PID,RATING) values ('1','2','4');
+Insert into RATES (PERID,PID,RATING) values ('2','8','2');
+Insert into RATES (PERID,PID,RATING) values ('8','4','3');
+Insert into RATES (PERID,PID,RATING) values ('9','4','5');
+Insert into RATES (PERID,PID,RATING) values ('7','5','2');
+Insert into RATES (PERID,PID,RATING) values ('6','2','3');
+Insert into RATES (PERID,PID,RATING) values ('4','6','2');
+Insert into RATES (PERID,PID,RATING) values ('4','5','3');
+Insert into RATES (PERID,PID,RATING) values ('5','9','3');
 
 --RetrieveLog
 
