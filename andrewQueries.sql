@@ -2,7 +2,6 @@ create or replace PROCEDURE getBook(personID in INTEGER, get_pid in INTEGER)
 AS
 book integer;
 person integer;
-author integer;
 hasPayed integer;
 isAuthor integer;
 isBook CHAR;
@@ -91,23 +90,24 @@ END personExists;
 
 
 -- 1. Name of the author
-create or replace PROCEDURE getAuthor (auth IN CHAR)
+create or replace PROCEDURE getAuthor (auth IN integer)
 AS
 AuthorID integer;
-AuthorName Char;
-BEGIN
-Select A.perid into AuthorID
-  FROM Authors A
-  WHERE A.perid = auth;
-  IF AuthorID is NULL THEN
-    DBMS_OUTPUT.PUT_LINE('Im sorry, the author does not exist');
-  ELSE
-    Select P.name into AuthorName
-    FROM Persons P
-    WHERE P.perid = AuthorID;
+AuthorName Char(20);
 
-    DBMS_OUTPUT.PUT_LINE('The authors name is: '|| AuthorName);
-  END IF;
+BEGIN
+  AUTHORID := NULL;
+  Select MAX(A.perid) into AuthorID
+    FROM Authors A
+    WHERE A.perid = auth;
+    IF AuthorID is NULL THEN
+      DBMS_OUTPUT.PUT_LINE('Im sorry, the author does not exist');
+    ELSE
+      Select P.name into AuthorName
+      FROM Persons P
+      WHERE P.perid = AuthorID;
+      DBMS_OUTPUT.PUT_LINE('The authors name is: '|| AuthorName);
+    END IF;
 END;
 
 -- 2. List Name of Person and Title of Book for the latest n retrieved records
@@ -187,3 +187,32 @@ create or replace procedure findCircle (
     end loop;
 
   end findCircle;
+
+
+
+--#8 Find the 'Budget Authors': List the names of the authors and publications where the author wrote more than
+--2 types of publications and the cost is less $20
+Select A.name, DISTINCT(W1.title)
+FROM Authors A, Writes W1, Writes W2, Publications P1, Publications P2
+WHERE A.perid = W1.perid 
+  AND W1.pid = P1.pid 
+  AND A.perid = W2.perid 
+  AND W2.pid = P2.pid
+  AND P1.pid <> P2.pid
+  AND P1.cost < 20.0
+  AND P2.cost < 20.0
+
+--Show the names for all users who have read the highest average rated book 
+SELECT P.name
+FROM (SELECT avgRates.pid, MAX(avgRates.avgRating) theMax
+          FROM (SELECT R.pid, AVG(R.rating) avgRating
+                FROM Rates R
+                Group BY R.pid) avgRates
+        GROUP BY avgRates.pid 
+     ) maxAvg, Persons P, RetrieveLog RL
+WHERE maxAvg.pid = RL.pid AND RL.perid = P.perid
+
+
+
+
+

@@ -129,7 +129,6 @@ create or replace PROCEDURE GetLatestRetrievals(numberOfEntries IN INTEGER)
 END;
 
 -- 5. LIST REFERENCE TRACE FOR A PUBLICATION ---
---TODO: Clean up output.
 create or replace procedure findCircle (
       p_start_with IN integer,
       childsParent IN integer,
@@ -169,14 +168,19 @@ create or replace procedure findCircle (
   end findCircle;
 
   --#6 List the perid of the Author who has max number of publications
---NOT WORKING
---TODO: Add a temp table and load to get max number of publications.
-  Select A.perid, P.name, count(*) AS "Number of Publications"
-    from Authors A, Persons P, Writes Wr
-  Where
-    A.perid = P.perid and
-    A.perid = Wr.perid
-    Group by A.PERID, P.name  Order by "Number of Publications" desc fetch first 1 ROWS only;
+  Select P.perid, P.name, A.CITY, A.State, A.STREETADDRESS
+    FROM (  Select W.perid, Count(W.pid) titles
+            FROM writes W
+            GROUP BY W.perid) temp, 
+            Persons P, Writes W, Authors A
+    WHERE temp.perid = W.perid AND A.perid = W.perid AND P.perid = A.perid
+          AND temp.titles = ( Select MAX(temp1.titles)
+                              FROM(
+                                Select W.perid, Count(W.pid) titles
+                                FROM writes W
+                                GROUP BY W.perid
+                              ) temp1)
+  GROUP BY P.perid, P.name, A.STREETADDRESS, A.CITY, A.State;
 
 -- 7. List the names of Authors who live in the same city
 
@@ -284,11 +288,14 @@ close books;
 END;
 
 -- 13. For each Author find the Average rating give for each of their books. Print the Authors Name and the Average rating
---TODO: Can have 2 DISTINCT authors with the same name.
-SELECT DISTINCT S.name, AVG(R.rating)
-FROM Persons S, Authors A, Writes W, Publications P, Rates R
-WHERE S.perid = A.perid AND A.perid = W.perid AND W.pid = P.pid AND P.pid = R.pid
-GROUP BY S.name;
+
+Select P.name author, Pub.title ,temp.avgRating
+FROM (  SELECT S.perid, W.PID, AVG(R.rating) avgRating
+        FROM Persons S, Authors A, Writes W, Publications P, Rates R
+        WHERE S.perid = A.perid AND A.perid = W.perid AND W.pid = P.pid AND P.pid = R.pid
+        GROUP BY S.perid, W.PID
+      ) temp, Authors A, Persons P, Writes W, Publications Pub
+WHERE temp.perid = W.perid AND temp.pid = W.pid and A.perid = W.perid AND Pub.pid = W.pid AND a.perid = P.perid;
 
 -- 14. For Book X find each date for which the book was viewed. where X is a input parameter
 CREATE OR REPLACE PROCEDURE datesviewed(X IN CHAR) AS
@@ -373,6 +380,38 @@ FROM Persons P, Authors A, Authors B
 WHERE P.perid = A.perid AND A.city = B.city AND A.perid<>B.perid
 GROUP BY (A.city, P.name);
 
+-- 19.List the names of the author and publication where the author wrote more than
+--    2 types of publications and the cost was between $5 and $20
+Select P.name, Pub.title
+FROM Persons P, Authors A, Publications Pub, Writes W,
+    (Select DISTINCT (P.perid) perids
+      FROM Persons P, Authors A, Writes W1, Writes W2, Publications P1, Publications P2
+      WHERE P.perid = A.perid
+      AND A.perid = W1.perid
+      AND W1.pid = P1.pid
+      AND A.perid = W2.perid
+      AND W2.pid = P2.pid
+      AND P1.pid <> P2.pid
+      AND P1.price < 20.0
+      AND P2.price < 20.0) temp
+  WHERE temp.perids = P.perid AND temp.perids = A.perid AND A.perid = W.perid AND Pub.pid = W.pid AND Pub.price < 20.0;
+
+  --USEFUL DATA FOR TESTING:
+  --  INSERT INTO Publications (pid, title, type, content, price) VALUES (90, 'A title', 'Magazine', 'Content here',5);
+  --INSERT INTO Publications (pid, title, type, content, price) VALUES (91, 'Nother Title', 'Proceedings', 'Content Here', 4);
+
+  --EXEC Write(1, 90);
+  --EXEC Write(1, 91);
+
+--20. Show all users that have read the books with the highest average rating.
+SELECT P.name
+FROM (SELECT avgRates.pid, MAX(avgRates.avgRating) theMax
+          FROM (SELECT R.pid, AVG(R.rating) avgRating
+                FROM Rates R
+                Group BY R.pid) avgRates
+        GROUP BY avgRates.pid
+     ) maxAvg, Persons P, RetrieveLog RL
+WHERE maxAvg.pid = RL.pid AND RL.perid = P.perid;
 
 -- 3. List the counts of views by document type from all Persons. If they have a count of zero for views, show a zero.
 -- 4. What is the average cost for an author's work.
@@ -384,5 +423,3 @@ GROUP BY (A.city, P.name);
 --#5 List the name & id of Author and Customer who are from the same state
 --#7 List the name, id & date viewed of publications that are rated more than 3 and
 --were retrieved between 03/01/2010 and 09/01/2016
---#8 List the names of the authors and publications where the author wrote more than
---2 types of publications and the cost was between $5 and $20
