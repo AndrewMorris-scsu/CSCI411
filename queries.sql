@@ -129,7 +129,6 @@ create or replace PROCEDURE GetLatestRetrievals(numberOfEntries IN INTEGER)
 END;
 
 -- 5. LIST REFERENCE TRACE FOR A PUBLICATION ---
---TODO: Clean up output.
 create or replace procedure findCircle (
       p_start_with IN integer,
       childsParent IN integer,
@@ -169,14 +168,19 @@ create or replace procedure findCircle (
   end findCircle;
 
   --#6 List the perid of the Author who has max number of publications
---NOT WORKING
---TODO: Add a temp table and load to get max number of publications.
-  Select A.perid, P.name, count(*) AS "Number of Publications"
-    from Authors A, Persons P, Writes Wr
-  Where
-    A.perid = P.perid and
-    A.perid = Wr.perid
-    Group by A.PERID, P.name  Order by "Number of Publications" desc fetch first 1 ROWS only;
+  Select P.perid, P.name, A.CITY, A.State, A.STREETADDRESS
+    FROM (  Select W.perid, Count(W.pid) titles
+            FROM writes W
+            GROUP BY W.perid) temp, 
+            Persons P, Writes W, Authors A
+    WHERE temp.perid = W.perid AND A.perid = W.perid AND P.perid = A.perid
+          AND temp.titles = ( Select MAX(temp1.titles)
+                              FROM(
+                                Select W.perid, Count(W.pid) titles
+                                FROM writes W
+                                GROUP BY W.perid
+                              ) temp1)
+  GROUP BY P.perid, P.name, A.STREETADDRESS, A.CITY, A.State;
 
 -- 7. List the names of Authors who live in the same city
 
@@ -284,11 +288,14 @@ close books;
 END;
 
 -- 13. For each Author find the Average rating give for each of their books. Print the Authors Name and the Average rating
---TODO: Can have 2 DISTINCT authors with the same name.
-SELECT DISTINCT S.name, AVG(R.rating)
-FROM Persons S, Authors A, Writes W, Publications P, Rates R
-WHERE S.perid = A.perid AND A.perid = W.perid AND W.pid = P.pid AND P.pid = R.pid
-GROUP BY S.name;
+
+Select P.name author, Pub.title ,temp.avgRating
+FROM (  SELECT S.perid, W.PID, AVG(R.rating) avgRating
+        FROM Persons S, Authors A, Writes W, Publications P, Rates R
+        WHERE S.perid = A.perid AND A.perid = W.perid AND W.pid = P.pid AND P.pid = R.pid
+        GROUP BY S.perid, W.PID
+      ) temp, Authors A, Persons P, Writes W, Publications Pub
+WHERE temp.perid = W.perid AND temp.pid = W.pid and A.perid = W.perid AND Pub.pid = W.pid AND a.perid = P.perid;
 
 -- 14. For Book X find each date for which the book was viewed. where X is a input parameter
 CREATE OR REPLACE PROCEDURE datesviewed(X IN CHAR) AS
